@@ -1,0 +1,387 @@
+
+=== PAGE 1 ===
+ScienceDirect
+Available online at www.sciencedirect.com
+Procedia Computer Science 285 (2026) 1424–1431
+1877-0509 © 2026 The Authors. Published by Elsevier B.V .
+This is an open access article under the CC BY-NC-ND license (https://creativecommons.org/licenses/by-nc-nd/4.0)
+Peer-review under responsibility of the scientific committee of CSIA2025 Program Members.
+© 2026 The Authors. Published by Elsevier B.V .
+This is an open access article under the CC BY-NC-ND license (https://creativecommons.org/licenses/by-nc-nd/4.0)
+Peer-review under responsibility of the scientific committee of CSIA2025 Program Members.
+Keywords: Machine learning, False news detection, Feature extraction, Text classification, Model Comparison
+1. Introduction
+In the digital era, the Internet has become the main channel for the public to obtain information. Social media and 
+various news platforms have broken the limitations of information dissemination in time and space, allowing 
+information to quickly and widely spread. However, false information also leverages these technological advantages 
+to exhibit characteristics of fast dissemination, deep concealment, and wide impact, involving multiple aspects such 
+as politics, economy, culture, and public health. This type of information not only misleads the public's judgment, 
+but may also be used to seek improper benefits, and even in extreme cases, can cause social chaos. The traditional 
+method of detecting fake news relies heavily on manual verification, which is not only time -consuming and 
+* Corresponding author. Tel.: +0-000-000-0000 ; fax: +0-000-000-0000 .
+E-mail address: qlwbok@sina.com
+7th International Conference on Cyber Security Intelligence and Analytic s
+Fake news detection based on machine learning hybrid model
+Dong Peng, Jian Song* 
+School of Communication, Shandong University of Political Science and Law, Jinan250014, China
+Abstract
+Due to the widespread use of the Internet and social networking platforms, false news is spreading faster and faster, and its scope 
+of influence continues to expand. Such false information not only easily misleads the public, but may also disrupt social ord er, 
+and even pose a threat to political stability, economic development, and public health. To address this challenge, this paper
+proposes a machine learning based method for detecting fake news. This method mainly involves preprocessing, feature 
+extraction, and optimization of news texts, and constructs a hybrid model that integrates traditional machine learning and sh allow 
+deep learning to achieve efficient and accurate identification of fake news. In order to verify the effectiveness of the prop osed 
+method, this paper conducted multiple comparative experiments to compare the performance of different models in false news 
+detection tasks; Finally, a thorough analysis of the experimental results was conducted. The experimental results show that t he 
+hybrid model proposed in this paper achieves an accuracy of 95.3%, which is significantly better than a single machine learni ng 
+model, providing strong technical support for the automatic recognition and effective governance of fake news.
+=== PAGE 2 ===
+Dong Peng  et al. / Procedia Computer Science 285 (2026) 1424–1431 1425
+inefficient, but also easily limited by the subjective judgment and professional level of the reviewers, making it 
+difficult to meet the requirements of the information explosion era for detection speed and scale. In contrast, 
+machine learning technology has become more mature in text classification and information recognition, providing a 
+new solution for automatically identifying fake news. Specifically, with the help of a large amount of labeled data 
+for training, machine learning can uncover hidden features and patterns in news texts, thereby quickly identifying 
+fake news and significantly improving detection efficiency and accuracy [1].
+Currently, machine learning based false news detection has become a hot topic in academic research. Domestic 
+and foreign scholars have proposed various technical solutions, but there are still some shortcomings: some methods 
+rely on manually designed feature extraction, which is difficult to cover all key information in the text; A single 
+model is often difficult to adapt to various forms of false news; Some deep learning models have complex structures 
+and high training costs, which are not convenient for practical deployment [2]. In response to the above issues, this 
+article intends to conduct corresponding research aimed at optimizing feature extraction methods and constructing a 
+stable and efficient detection model.
+2. Literature Review
+The research on false news detection based on machine learning is becoming increasingly mature, and scholars at 
+home and abroad have conducted a series of studies on data preprocessing, feature extraction, and model 
+construction.
+Park M and Chai S proposed a detection method based on decision trees and Bayesian classifiers, which analyzed 
+Twitter news dissemination data, extracted user metadata, dissemination speed and other features to evaluate news 
+credibility, pioneering research in this field [3]. However, the mining of text content features is insufficient, and the 
+detection accuracy needs to be improved.
+Jain et al. proposed a detection method based on propagation time and structural patterns, which constructs a 
+model by analyzing the characteristics of rumor propagation path, speed, etc [4]. It focuses on propagation features 
+but ignores text semantic information, making it difficult to deal with complex false news types.
+Huang et al. proposed a detection framework that integrates content features and social context features, extracts 
+text language features and user communication behavior features to construct a multi feature model, which improves 
+detection accuracy [5]. However, feature engineering is complex and feature screening optimization is not perfect.
+Abdullah N A S et al. proposed a detection method that combines traditional machine learning with large 
+language models. They sorted out the techniques from the perspectives of knowledge, style, propagation, and source, 
+pointed out the advantages and disadvantages of large language models, emphasized multimodal analysis and model 
+transparency [6].
+Sudhakar M and Kaliyamurthie K P proposed a multimodal detection method based on multiple comments and 
+triple perspectives, which integrates real and large language models to generate comments, and combines self 
+review, peer evaluation, and comprehensive evaluation to construct an anti illusion model. The detection effect is 
+excellent, but the model is complex, the training cost is high, and it is difficult to deploy lightweight [7].
+Jouhar et al. proposed a detection method based on logistic regression, gradient boosting, and XGBoost. TF -IDF 
+was used to extract features, and experiments on the Kaggle dataset showed that the accuracy of logistic regression 
+reached 94.72%. However, relying on a single statistical feature makes it difficult to capture deep semantic 
+information [8].
+Swathi P et al. proposed a hybrid deep learning model that integrates BiLSTM and CNN, using Word2Vec to 
+obtain word embedding features and combining attention mechanism to improve semantic extraction ability, with 
+excellent detection performance, but high training complexity and hardware requirements [9].
+Abualigah et al. proposed a detection method based on stacked ensemble learning, which integrates SVC and 
+XGBoost models and uses IndoBERT to preprocess text. The accuracy reached 82%, but the generalization ability is 
+insufficient on small sample datasets [10].
+Al Alshaqi et al. proposed an adaptive detection framework for unseen events, which improves the model's 
+generalization ability through adaptive enhancement and graph contrastive learning [11]. However, the 
+computational complexity is high and it is difficult to adapt to real-time detection requirements.
+Nadeem et al. proposed a detection method based on LSTM -CNN and BERT -CLS, which utilizes the CLS 
+embedding layer of BERT to extract semantic features, and combines LSTM and CNN to extract sequence and local 
+features, taking into account both semantic and structural features [12]. However, the model has many parameters 
+=== PAGE 3 ===
+1426 Dong Peng  et al. / Procedia Computer Science 285 (2026) 1424–1431
+and low training efficiency.
+To sum up, the existing research has made some progress, but there are still shortcomings: low degree of 
+automation of artificial feature engineering, poor adaptability of single model, complex deep learning model, and 
+some methods ignore multimodality and anti hallucination ability.
+3. Methodolog
+3.1. Data Preprocessing
+Data preprocessing is a fundamental task in the detection process, aimed at removing noise and unifying text 
+formats to provide high -quality input for subsequent tasks. The original text often contains irrelevant information 
+such as special symbols, punctuation, stop words, etc., which can interfere with the detection effect. This article 
+proposes a preprocessing process consisting of four steps.
+3.1.1 Data cleaning
+First, remove invalid content such as special symbols, punctuation, numbers, URLs, and blank characters from 
+the text. Next, deal with missing information: if the missing proportion of a sample exceeds 30%, delete the sample 
+directly; If the missing ratio is within 30%, fill it in using the mean or mode filling method. In addition, duplicate 
+samples should also be removed to prevent them from interfering with model training and improve processing 
+efficiency.
+3.1.2 Text Standardization
+In the standardization step, all English letters will be uniformly converted to lowercase, while traditional Chinese 
+characters will be converted to simplified. For variant characters and common misspellings, corrections should also 
+be made. When Chinese and English are mixed, only the meaningful parts are retained, and irrelevant numbers and 
+English content (such as dates, numbers, etc.) are removed. In this way, the text format can be kept consistent and 
+the content will be more accurate.
+3.1.3 Segmentation Processing
+When processing Chinese text, use stutter segmentation tools for segmentation. This tool has high accuracy, fast 
+processing speed, and supports custom dictionaries, which can better handle complex sentence structures and rare 
+words. For English text, use the NLTK tool to segment words, while removing hyphens and abbreviations, and 
+breaking down words into basic morphemes. Finally, convert the processed text into a sequence of lexical elements.
+3.1.4 Removing stop words
+Combine Chinese and English stop word lists to remove words such as "de", "di", and "de" that appear frequently 
+but have low semantic contribution. In addition, considering the characteristics of news texts, some custom stop 
+words (such as "news", "report", etc.) will be added to further streamline the text content and improve the 
+effectiveness of subsequent feature extraction.
+3.2. Feature Extraction
+Feature extraction is a crucial step in the entire detection process. This article combines statistical features based 
+on TF-IDF with semantic features based on BERT, which ensures extraction efficiency and improves recognition 
+accuracy. The specific method is as follows:
+3.2.1 TF-IDF Statistical Feature Extraction
+TF-IDF is a method of measuring the importance of words in text. The basic idea is that if a word appears 
+frequently in the current text but not frequently in the entire corpus, then that word has good discriminative ability. 
+The specific calculation formula is as follows:
+TF-IDF(t,d)=TF(t,d)×IDF(t) (1)
+Among them, TF (t, d) is the frequency of word t in text d (the ratio of the number of word occurrences to the 
+total number of words in the text); IDF (t) is the inverse document frequency, calculated as IDF(t) = log
+N
+Nt+1, where 
+N is the total number of documents in the corpus, N t is the number of documents containing the word t, and adding 1 
+avoids the denominator being 0.
+Construct a corpus vocabulary, calculate the TF -IDF value of each text and convert it into a fixed dimensional 
+feature vector; Using ANOVA to screen features, retaining features with high variance and discriminability, and 
+=== PAGE 4 ===
+Dong Peng  et al. / Procedia Computer Science 285 (2026) 1424–1431 1427
+optimizing vector quality.
+3.2.2 BERT semantic feature extraction
+TF-IDF is difficult to capture deep semantics. In this paper, a lightweight DistilBERT model is used to extract 
+semantic features, which retains the core functions of BERT, reduces parameters, and improves efficiency. Convert 
+the preprocessed text into an input format acceptable to the model, obtain the final layer CLS token output as the 
+semantic feature vector after input, and normalize to ensure consistent feature scales.
+3.2.3 Feature Fusion
+Using feature concatenation to fuse TF -IDF and BERT features, forming high -dimensional feature vectors that 
+balance statistical and semantic information; Using PCA to reduce dimensionality and avoid overfitting, the PCA 
+linear transformation formula is as follows:
+Y = X × W (2)
+Among them, X is the fused high -dimensional feature matrix, W is the linear transformation matrix, and Y is the 
+reduced low dimensional feature matrix, which can preserve core information, improve model efficiency and 
+generalization ability.
+3.3. Model Construction and Training
+Build a hybrid model of XGBoost and lightweight CNN, divided into feature mapping layer, feature fusion layer, 
+and classification output layer, fully utilizing the fused features to achieve efficient classification. The specific 
+structure and training process are as follows:
+3.3.1 Model Structure Design
+(1) Feature Mapping Layer: The PCA reduced features are separately input into XGBoost and Lightweight CNN. 
+XGBoost captures non -linear relationships and processes high -dimensional features, while CNN extracts local 
+features through convolution and pooling, complementing each other to improve performance.
+(2) Feature fusion layer: Weighted summation is used to fuse the output features of two models. XGBoost 
+outputs F1 and CNN outputs F2. The formula for calculating the fused feature F is as follows:
+F=α×F1+(1-α)×F2 (3)
+Among them, a is the weight coefficient (0<a<1), which was determined to be 0.6 through cross validation, 
+taking into account the advantages of both models.
+(3) Classification output layer: Fusion feature input fully connected layer integration, using Sigmoid activation 
+function to output [0,1] interval results. Results greater than 0.5 are fake news, otherwise they are real news.
+3.3.2 Model Training Process
+(1) Dataset partitioning: Divided into training and testing sets in an 8:2 ratio, with 10% of the training set used as 
+the validation set for hyperparameter tuning and overfitting detection.
+(2) Hyperparameter setting: Determine the optimal parameters through grid search and cross validation: XGBoost 
+learning rate of 0.1, tree depth of 6, 100 iterations, regularization lambda=0.1; 32 CNN convolution kernels, size 3 × 
+3, max pooling, fully connected layer with 128 neurons; Adam optimizer learning rate 5 × 10 -6, batch size 32, 
+training epochs 50.
+(3) Model training: Using cross entropy loss function, monitor performance through validation set, and stop early 
+if the loss does not decrease for 5 consecutive rounds of validation; Set a dropout rate of 0.3 for the fully connected 
+layer to prevent overfitting.
+(4) Model optimization: Adjust hyperparameters and fusion weights, investigate issues such as vanishing 
+gradients and overfitting, and ensure the stability and reliability of the model.
+4. Experiment and Result Analysis
+4.1. Experimental Setup
+In order to ensure the fairness and comparability of experimental results, all tests were conducted under unified 
+hardware, software, dataset, and evaluation standards. The specific configuration is as follows.
+4.1.1 Hardware Configuration
+The processor used in this experiment is Intel Core i7 -12700H, with a clock speed of 2.7 GHz and 24 MB of 
+cache. In terms of graphics processor, an NVIDIA GeForce RTX 3060 is used, which has 6 GB of video memory. In 
+=== PAGE 5 ===
+1428 Dong Peng  et al. / Procedia Computer Science 285 (2026) 1424–1431
+addition, the system is equipped with 16 GB of memory and a 512 GB solid -state drive. These hardware conditions 
+provide the basic support for the stable operation of the experiment.
+4.1.2 Software Configuration
+The operating system selected is Windows 11 Professional Edition. In terms of programming language, Python 
+3.8 is used as the development environment. Deep learning tasks mainly rely on TensorFlow 2.8.0 and PyTorch 
+1.12.0. For text processing, stuttering segmentation and NLTK tools were utilized. In machine learning modeling, 
+Scikit learn 1.0.2 and XGBoost 1.6.1 were used. Data preprocessing and analysis are completed by Pandas 1.4.2 and 
+NumPy 1.22.4. Finally, the visualization section utilized Matplotlib 3.5.1 and Seaborn 0.11.2.
+4.1.3 Dataset
+Using three publicly annotated datasets, Weibo, Weibo21, and GossipCop, covering both Chinese and English 
+news, the performance and generalization ability of the model were validated. Detailed statistics are shown in Table 
+1 below:
+Table 1 Dataset Statistics
+Dataset Number of fake news Real news quantity Total sample size Text type Average text length (number of words)
+Weibo 2805 3058 5863 Chinese 186
+Weibo21 1922 2592 4514 Chinese 168
+GossipCop 3868 4331 8199 English 215
+Weibo and Weibo21 are Chinese social media news, while GosiPop is English entertainment news. The samples 
+are sufficient and the types are comprehensive, all of which have been processed through the preprocessing process 
+of this article to ensure data quality.
+4.1.4 Evaluation indicators
+Evaluate performance using four indicators: accuracy, precision, recall, and F1 score: (1) Accuracy: The 
+proportion of correctly predicted samples to the total sample reflects the overall detection effect; (2) Accuracy: The 
+proportion of samples predicted as fake news that are actually fake news, reflecting the accuracy of the prediction; 
+(3) Recall rate: the proportion of correctly predicted false news samples, reflecting recognition ability; (4) F1 value: 
+the harmonic average of precision and recall, which comprehensively reflects the detection performance.
+4.2. Result Analysis
+Comparing the hybrid model (XGBoost+lightweight CNN) with logistic regression, XGBoost, and BiLSTM 
+CNN, experiments were conducted on three datasets, and the results are as follows:
+4.2.1 Performance Comparison of Various Models on Weibo Dataset
+The Weibo dataset contains 5863 Chinese social media news samples, and the experimental results are shown in 
+Figure 1:
+=== PAGE 6 ===
+Dong Peng  et al. / Procedia Computer Science 285 (2026) 1424–1431 1429
+Figure 1 Performance Comparison of Various Models on Weibo Dataset
+The results in Figure 1 show that the mixed model in this article has the best performance in all indicators, with 
+an accuracy of 95.3%, which is 6.6, 2.8, and 1.5 percentage points higher than logistic regression, XGBoost, and 
+BiLSTM CNN, respectively; The F1 score is 94.6%, with increases of 7.4, 3.4, and 1.6 percentage points 
+respectively, indicating that it can effectively capture text features and perform outstandingly in Chinese social 
+media news detection.
+4.2.2 Performance Comparison of Various Models on Weibo21 Dataset
+Weibo21 contains 4514 samples, with a more balanced sample distribution. The experimental results are shown 
+in Figure 2:
+Figure 2 Performance Comparison of Various Models on Weibo21 Dataset
+88.7
+87.9
+86.5
+87.2
+92.5
+91.8
+90.7 91.2
+93.8
+93.2 92.9 93
+95.3 94.8 94.5 94.6
+82
+84
+86
+88
+90
+92
+94
+96
+Accuracy（%） Precision（%） Recall（%） F1 value（%）
+Logistic regression
+ XGBoost
+ BiLSTM-CNN
+ Mixture model
+87.3
+86.5
+85.1
+85.8
+91.8
+91.1
+90.2 90.6
+92.7 92.1 91.8 91.9
+94.2 93.7
+91.9
+93.5
+80
+82
+84
+86
+88
+90
+92
+94
+96
+Accuracy（%） Precision（%） Recall（%） F1 value（%）
+Logistic regression
+ XGBoost
+ BiLSTM-CNN
+ Mixture model
+=== PAGE 7 ===
+1430 Dong Peng  et al. / Procedia Computer Science 285 (2026) 1424–1431
+The results in Figure 2 show that the hybrid model in this article still leads with an accuracy of 94.2%, which is 
+6.9, 2.4, and 1.5 percentage points higher than the three comparative models, respectively; The F1 score is 93.5%, 
+with increases of 7.7, 2.9, and 1.6 percentage points respectively, indicating good generalization ability and 
+adaptability to Chinese news datasets with different distributions.
+4.2.3 Performance Comparison of Various Models on the GossipCop Dataset
+GossipCop contains 8199 English entertainment news samples, and the experimental results are shown in Figure 
+3:
+Figure 3 Performance comparison of various models on the GossipCop dataset
+The results in Figure 3 show that the accuracy of the hybrid model in this article is 95.0%, which is 5.8, 1.9, and 
+1.0 percentage points higher than the three comparative models, respectively; The F1 score is 94.3%, with increases 
+of 6.2, 2.3, and 1.0 percentage points respectively, indicating that it can effectively handle English news and has 
+strong cross language generalization ability.
+4.2.4 Comprehensive analysis of model performance
+Based on the experimental results on the three datasets, the hybrid model proposed in this paper outperforms the 
+comparative model in all evaluation indicators, demonstrating significant advantages. Compared to logistic 
+regression, this model introduces both statistical and semantic features, which enables better processing of 
+structurally complex texts and enhances detection capabilities. Compared with XGBoost, this model utilizes CNN to 
+extract semantic information, which can to some extent compensate for the shortcomings of XGBoost in deep 
+semantic understanding. Compared with BiLSTM CNN, this model maintains high detection accuracy while 
+training faster and requiring lower hardware resources, making it more feasible for practical deployment. In addition, 
+the model has achieved good performance on both Chinese and English datasets, indicating its strong generalization 
+ability and promising application prospects.
+4.3. Discussion
+4.3.1 Model advantages
+Firstly, the feature extraction method is relatively comprehensive. This model combines TF -IDF and BERT 
+features, taking into account both surface statistical information such as word frequency and deep semantic 
+information, enhancing the discriminative ability of the features. Secondly, the detection effect is excellent. On three 
+datasets, the accuracy and F1 score of the hybrid model exceeded 94%, indicating its reliable ability to identify fake 
+news. Thirdly, it has strong practicality. Due to the introduction of lightweight structures and PCA dimensionality 
+89.2
+88.5
+87.8 88.1
+93.1
+92.4
+91.7 92
+94
+93.5 93.2 93.3
+95
+94.5
+93.3
+94.3
+84
+86
+88
+90
+92
+94
+96
+Accuracy（%） Precision（%） Recall（%） F1 value（%）
+Logistic regression
+ XGBoost
+ BiLSTM-CNN
+ Mixture model
+=== PAGE 8 ===
+Dong Peng  et al. / Procedia Computer Science 285 (2026) 1424–1431 1431
+reduction techniques, the number of parameters and training costs of the model have been reduced, and the 
+operational efficiency has been improved, making it more suitable for practical use in real -world scenarios.
+4.3.2 Insufficient Model
+Firstly, the ability to detect short texts is still lacking. When the number of words in a text is less than 50, the 
+available features are relatively scarce, making it difficult for the model to extract effective information from it, 
+resulting in a decrease in detection accuracy. Secondly, there is a lack of processing capability for multimodal 
+information. This model only analyzes text data and does not integrate information from other modalities such as 
+images and videos, making it difficult to deal with the diverse forms of fake news in reality. Thirdly, the anti -
+interference ability is not strong enough. If fake news contains a large amount of confusing irrelevant information, 
+these contents will interfere with the feature extraction process, thereby weakening the detection performance of the 
+model.
+5. Conclusion
+This article proposes a hybrid detection strategy that combines TF -IDF and BERT semantic features to address 
+the shortcomings of existing false news detection methods. This strategy uses XGBoost and lightweight CNN as 
+modeling tools to sequentially complete data preprocessing, feature extraction, model training, and other steps, 
+thereby achieving efficient recognition of fake news. The experiment was conducted on three datasets, and the 
+results showed that this method achieved the highest accuracy of 95.3%, significantly better than the three control 
+methods, and also demonstrated strong adaptability in different data environments. This work enriches the research 
+content in the field of false news detection, and the proposed technical solution has high usability in practical 
+applications, which can provide certain technical support for the automatic identification and governance of false 
+news.
+References
+[1] Dal Forno A J, Richetti G P, Knaesel V H. Fake news detection algorithms –A systematic literature review. Data & Knowledge Engineering, 
+2025, 158: 102441.
+[2] Choudhury D, Acharjee T. A novel approach to fake news detection in social networks using genetic algorithm applying machine learning 
+classifiers. Multimedia Tools and Applications, 2023, 82(6): 9029-9045.
+[3] Park M, Chai S. Constructing a user -centered fake news detection model by using classification algorithms in machine learning techniques. 
+IEEe Access, 2023, 11: 71517-71527.
+[4] Jain A, Rani I, Singhal T, et al. Methods and Applications of Graph Neural Networks for Fake News Detection Using AI -Inspired 
+Algorithms.Concepts and Techniques of Graph Neural Networks. IGI Global Scientific Publishing, 2023: 186-201.
+[5] Huang T, Xu Z, Y u P , et al. A hybrid transformer model for fake news detection: Leveraging Bayesian optimization and bidirectional recurrent 
+unit. 2025 8th International Symposium on Big Data and Applied Statistics (ISBDAS). IEEE, 2025: 696-701.
+[6] Abdullah N A S, Rusli N I A, Y uslee N S. Development of a machine learning algorithm for fake news detection. Indonesian Jour nal of 
+Electrical Engineering and Computer Science, 2024, 35(3): 1732-1743.
+[7] Sudhakar M, Kaliyamurthie K P. Detection of fake news from social media using support vector machine learning algorithms. Mea surement: 
+Sensors, 2024, 32: 101028.
+[8] Jouhar J, Pratap A, Tijo N, et al. Fake news detection using python and machine learning. Procedia Computer Science, 2024, 233: 763-771.
+[9] Swathi P , Tejaswi D S, Khan M A, et al. Enhancing the identification of false news using machine learning algorithms: A comparative study. 
+Metaverse Basic and Applied Research, 2024, 3: 7.
+[10] Abualigah L, Al -Ajlouni Y Y , Daoud M S, et al. Fake news detection using recurrent neural network based on bidirectional LSTM and 
+GloV e. Social Network Analysis and Mining, 2024, 14(1): 40.
+[11] Al-Alshaqi M, Rawat D B, Liu C. Ensemble techniques for robust fake news detection: Integrating transformers, natural language 
+processing, and machine learning. Sensors, 2024, 24(18): 6062.
+[12] Nadeem M, Abbas P , Zhang W, et al. Enhancing fake news detection with a hybrid NLP-machine learning framework. ICCK Transactions on 
+Intelligent Systematics, 2024, 1(3): 203-214.

@@ -1,0 +1,22 @@
+# Core Data Science & Machine Learning
+numpy>=1.22.0
+pandas>=1.4.0
+scipy>=1.8.0
+scikit-learn>=1.0.2
+xgboost>=1.6.0
+
+# Natural Language Processing & Explainability
+jieba>=0.42.1
+nltk>=3.7
+wordcloud>=1.8.0
+shap>=0.41.0
+
+# Visualization & Reporting
+matplotlib>=3.5.0
+seaborn>=0.11.0
+
+# Interactive Web Application
+streamlit>=1.20.0
+
+# Serialization & Utilities
+joblib>=1.1.0

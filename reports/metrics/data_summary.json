@@ -1,0 +1,26 @@
+{
+    "dataset_type": "auto",
+    "initial_samples": {
+        "fake_samples": 4641,
+        "real_samples": 4951,
+        "total_samples": 9592
+    },
+    "data_quality": {
+        "missing_values_detected": 0,
+        "duplicate_count_removed": 404
+    },
+    "cleaned_samples": {
+        "final_fake_samples": 4330,
+        "final_real_samples": 4858,
+        "final_total_samples": 9188,
+        "fake_percentage": 47.13,
+        "real_percentage": 52.87
+    },
+    "features": [
+        "title",
+        "text",
+        "label",
+        "subject",
+        "split"
+    ]
+}

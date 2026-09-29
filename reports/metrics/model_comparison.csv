@@ -1,0 +1,6 @@
+Model,Accuracy,Precision,Recall,F1 Score,ROC-AUC,CV F1 Mean,CV F1 Std,Best Hyperparameters
+Logistic Regression,0.8765,0.8797,0.8879,0.8838,0.9456,0.8738,0.0085,"{'C': 5.0, 'solver': 'liblinear'}"
+Linear SVM,0.876,0.8804,0.8858,0.8831,0.9454,0.8754,0.0088,{'estimator__C': 0.5}
+Multinomial Naive Bayes,0.8607,0.8436,0.9043,0.8729,0.9406,0.8757,0.0055,{'alpha': 0.1}
+XGBoost,0.7769,0.7833,0.7994,0.7912,0.8719,0.8014,0.0067,"{'learning_rate': 0.15, 'max_depth': 5, 'n_estimators': 100}"
+Random Forest,0.7644,0.7545,0.822,0.7868,0.8608,0.8008,0.01,"{'max_depth': 25, 'n_estimators': 100}"

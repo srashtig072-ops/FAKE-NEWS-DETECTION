@@ -1,0 +1,12 @@
+{
+    "best_model_name": "Logistic Regression",
+    "best_f1_score": 0.8838,
+    "test_accuracy": 0.8765,
+    "models_evaluated": [
+        "Logistic Regression",
+        "Linear SVM",
+        "Multinomial Naive Bayes",
+        "XGBoost",
+        "Random Forest"
+    ]
+}
