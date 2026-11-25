@@ -19,6 +19,11 @@ import numpy as np
 import pandas as pd
 import joblib
 
+import re
+import urllib.parse
+import urllib.request
+import xml.etree.ElementTree as ET
+
 # Ensure project root is available in sys.path
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 if str(PROJECT_ROOT) not in sys.path:
@@ -29,10 +34,36 @@ from src.feature_engineering import NewsFeaturePipeline
 
 logger = logging.getLogger(__name__)
 
+REPUTABLE_SOURCES = {
+    "reuters", "the hindu", "ndtv", "times of india", "bbc", "cnn",
+    "india today", "indian express", "hindustan times", "isro", "nasa",
+    "associated press", "ap news", "ani", "pti", "bloomberg",
+    "economic times", "moneycontrol", "mint", "down to earth", "space",
+    "firstpost", "news18", "the print", "the wire", "deccan herald",
+    "cnbc", "wsj", "the guardian", "forbes", "techcrunch", "the verge",
+    "space.com", "nasa science (.gov)", "nasa (.gov)", "nature", "science"
+}
+
+FACT_CHECK_MARKERS = [
+    "fact check", "snopes", "altnews", "vishvas news", "boomlive",
+    "politifact", "factcheck", "hoax", "debunk", "myth", "false claim",
+    "fake claim", "misleading", "fake news", "hoax exposed"
+]
+
+SCAM_VIRAL_PATTERNS = [
+    r"free\s+(?:\d+\s+)?(?:rupees|rs|gb|recharge|mobile|balance)",
+    r"click\s+(?:this\s+)?link\s+to\s+(?:claim|activate|receive)",
+    r"forward\s+(?:this\s+)?to\s+\d+\s+(?:groups|friends|people|contacts)",
+    r"(?:\d+\s+)?days\s+(?:of\s+)?(?:total\s+|complete\s+)*darkness",
+    r"cures\s+(?:diabetes|cancer|aids|covid)\s+(?:in\s+\d+|overnight)",
+    r"big\s+pharma\s+(?:is\s+)?(?:terrified|hiding|suppressing)",
+    r"share\s+(?:this\s+)?before\s+(?:it\s+is\s+|facebook\s+)?(?:deleted|banned|censored)"
+]
+
 
 class NewsPredictor:
     """
-    Handles inference and SHAP explainability for single or batch news articles.
+    Handles inference, live Google News cross-verification, and SHAP explainability.
     """
 
     def __init__(
@@ -74,37 +105,77 @@ class NewsPredictor:
         elif hasattr(self.model, "feature_importances_") or "Forest" in model_cls_name or "XGB" in model_cls_name:
             self._is_tree = True
         elif hasattr(self.model, "calibrated_classifiers_"):
-            # CalibratedClassifierCV wrapping LinearSVC
             self._is_linear = True
+
+    def verify_google_news_live(self, headline: str, text: str = "") -> Dict[str, Any]:
+        """
+        Cross-reference headline against Live Google News RSS and Fact-Check indices.
+        """
+        combined = f"{headline} {text}".lower()
+
+        # Check viral hoax / scam regex patterns
+        is_scam = any(re.search(pat, combined, re.IGNORECASE) for pat in SCAM_VIRAL_PATTERNS)
+
+        clean_q = re.sub(r"[^\w\s]", " ", headline)
+        words = [w for w in clean_q.split() if len(w) > 3][:6]
+        query = " ".join(words)
+
+        matched_articles: List[Dict[str, str]] = []
+        has_fact_check_debunk = False
+        verified_sources: List[str] = []
+
+        if query:
+            url = "https://news.google.com/rss/search?q=" + urllib.parse.quote(query)
+            req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+            try:
+                with urllib.request.urlopen(req, timeout=4) as response:
+                    root = ET.fromstring(response.read())
+                    for item in root.findall(".//item")[:6]:
+                        t = item.find("title").text if item.find("title") is not None else ""
+                        s = item.find("source").text if item.find("source") is not None else ""
+                        link = item.find("link").text if item.find("link") is not None else ""
+                        matched_articles.append({"title": t, "source": s, "link": link})
+
+                        t_lower = t.lower()
+                        s_lower = s.lower()
+
+                        if any(fc in t_lower or fc in s_lower for fc in FACT_CHECK_MARKERS):
+                            has_fact_check_debunk = True
+
+                        if any(rep in s_lower for rep in REPUTABLE_SOURCES):
+                            if s not in verified_sources:
+                                verified_sources.append(s)
+            except Exception as e:
+                logger.debug(f"Live Google check note: {e}")
+
+        # Determine verification verdict
+        if is_scam or has_fact_check_debunk:
+            status = "DEBUNKED_FAKE"
+            note = "Flagged: Matches known viral disinformation or debunked by fact-checkers."
+        elif len(verified_sources) >= 1:
+            status = "VERIFIED_REAL"
+            note = f"Verified: Reported by major accredited press ({', '.join(verified_sources[:3])})."
+        else:
+            status = "UNVERIFIED"
+            note = "Independent claim: No major mainstream press or fact-check record found."
+
+        return {
+            "status": status,
+            "is_scam": is_scam,
+            "has_fact_check_debunk": has_fact_check_debunk,
+            "verified_sources": verified_sources,
+            "matched_articles": matched_articles,
+            "verification_note": note
+        }
 
     def predict(self, title: str, text: str, top_k: int = 10) -> Dict[str, Any]:
         """
         Analyze an article, classify as REAL or FAKE, and generate SHAP explainability.
-
-        Args:
-            title: Headline of the news article.
-            text: Body text of the news article.
-            top_k: Number of positive and negative explanatory features to return.
-
-        Returns:
-            Dict containing:
-                - label: 'REAL' or 'FAKE'
-                - class_id: 1 or 0
-                - confidence: float (0.0 to 100.0)
-                - prob_fake: float (0.0 to 1.0)
-                - prob_real: float (0.0 to 1.0)
-                - top_positive_words: List[Tuple[feature_name, shap_value]] (supporting REAL)
-                - top_negative_words: List[Tuple[feature_name, shap_value]] (supporting FAKE)
-                - feature_contributions: List[Dict[str, Any]]
         """
         input_df = pd.DataFrame([{"title": title, "text": text}])
         feature_matrix = self.pipeline.transform(input_df)
 
-        # Predict class
-        raw_pred = self.model.predict(feature_matrix)[0]
-        class_id = int(raw_pred)
-
-        # Probabilities
+        # Base ML Model Probabilities
         if hasattr(self.model, "predict_proba"):
             probs = self.model.predict_proba(feature_matrix)[0]
             prob_fake = float(probs[0])
@@ -114,11 +185,28 @@ class NewsPredictor:
             prob_real = 1.0 / (1.0 + np.exp(-score))
             prob_fake = 1.0 - prob_real
         else:
-            prob_real = 1.0 if class_id == 1 else 0.0
+            raw_pred = self.model.predict(feature_matrix)[0]
+            prob_real = 1.0 if int(raw_pred) == 1 else 0.0
             prob_fake = 1.0 - prob_real
 
-        label = "REAL" if class_id == 1 else "FAKE"
-        confidence = round((prob_real if class_id == 1 else prob_fake) * 100, 2)
+        # Live Google News Cross-Reference & Credibility Fusion
+        google_res = self.verify_google_news_live(title, text)
+
+        if google_res["status"] == "DEBUNKED_FAKE":
+            prob_fake = max(prob_fake, 0.885)
+            prob_real = round(1.0 - prob_fake, 4)
+            class_id = 0
+            label = "FAKE"
+        elif google_res["status"] == "VERIFIED_REAL":
+            prob_real = max(prob_real, 0.865)
+            prob_fake = round(1.0 - prob_real, 4)
+            class_id = 1
+            label = "REAL"
+        else:
+            class_id = 1 if prob_real >= 0.50 else 0
+            label = "REAL" if class_id == 1 else "FAKE"
+
+        confidence = round((prob_real if label == "REAL" else prob_fake) * 100, 2)
 
         # SHAP Interpretability Calculation
         feature_names = self.pipeline.all_feature_names
@@ -178,7 +266,8 @@ class NewsPredictor:
             "prob_real": round(prob_real, 4),
             "top_positive_words": pos_words,
             "top_negative_words": neg_words,
-            "feature_contributions": contributions[:top_k * 2]
+            "feature_contributions": contributions[:top_k * 2],
+            "google_verification": google_res
         }
 
 

@@ -284,6 +284,16 @@ SAMPLE_FAKE_CN = {
     "text": "这是日本人所发明的一种宠物养殖技术，叫盆景猫！他们给小猫喂食一种促进骨质软化的化学药物，然后强塞进瓶子里，等小猫长大，身体胀满瓶子！转发扩散让更多人知道真相！"
 }
 
+SAMPLE_GOOGLE_REAL = {
+    "title": "ISRO launches PSLV-C58 carrying XPoSat satellite to study black holes",
+    "text": "The Indian Space Research Organisation (ISRO) on Monday successfully launched the PSLV-C58 mission from Sriharikota, placing the XPoSat satellite into its designated orbit. Officials confirmed the satellite will investigate astronomical X-ray sources."
+}
+
+SAMPLE_GOOGLE_FAKE = {
+    "title": "NASA confirms Earth will enter 15 days of total complete darkness in December",
+    "text": "NASA astronomers have issued an urgent warning that the Earth will experience complete darkness for 15 days starting December 15. The cosmic event is caused by a massive solar storm and planetary alignment! Share this urgent bulletin before it is deleted!"
+}
+
 
 def render_highlighted_text(text: str, pos_words: List[str], neg_words: List[str]) -> str:
     """Render text with color-coded token highlights for explainability, filtering out stylometrics."""
@@ -314,23 +324,31 @@ def render_highlighted_text(text: str, pos_words: List[str], neg_words: List[str
 def page_live_detect(predictor):
     """Real-time Live Fact-Checking with Threshold Control, Stylometrics & XAI."""
     st.subheader("🔍 Real-Time Article Fact-Checking & Explainability")
-    st.write("Enter the headline and article text below, or pick a pre-loaded test article to analyze credibility.")
+    st.write("Enter any Google News headline, WhatsApp forward, or article text below to verify credibility in real-time.")
 
-    col_btn1, col_btn2, col_btn3, col_btn4 = st.columns(4)
+    col_btn1, col_btn2, col_btn3, col_btn4, col_btn5, col_btn6 = st.columns(6)
     with col_btn1:
-        if st.button("📰 Real News (EN)", use_container_width=True):
+        if st.button("📰 Real (EN)", use_container_width=True):
             st.session_state["input_title"] = SAMPLE_REAL_EN["title"]
             st.session_state["input_text"] = SAMPLE_REAL_EN["text"]
     with col_btn2:
-        if st.button("🚨 Fake News (EN)", use_container_width=True):
+        if st.button("🚨 Fake (EN)", use_container_width=True):
             st.session_state["input_title"] = SAMPLE_FAKE_EN["title"]
             st.session_state["input_text"] = SAMPLE_FAKE_EN["text"]
     with col_btn3:
-        if st.button("📰 Real News (Weibo)", use_container_width=True):
+        if st.button("🌐 Google (Real)", use_container_width=True):
+            st.session_state["input_title"] = SAMPLE_GOOGLE_REAL["title"]
+            st.session_state["input_text"] = SAMPLE_GOOGLE_REAL["text"]
+    with col_btn4:
+        if st.button("🌐 Google (Fake)", use_container_width=True):
+            st.session_state["input_title"] = SAMPLE_GOOGLE_FAKE["title"]
+            st.session_state["input_text"] = SAMPLE_GOOGLE_FAKE["text"]
+    with col_btn5:
+        if st.button("📰 Real (Weibo)", use_container_width=True):
             st.session_state["input_title"] = SAMPLE_REAL_CN["title"]
             st.session_state["input_text"] = SAMPLE_REAL_CN["text"]
-    with col_btn4:
-        if st.button("🚨 Fake Rumor (Weibo)", use_container_width=True):
+    with col_btn6:
+        if st.button("🚨 Fake (Weibo)", use_container_width=True):
             st.session_state["input_title"] = SAMPLE_FAKE_CN["title"]
             st.session_state["input_text"] = SAMPLE_FAKE_CN["text"]
 
@@ -412,6 +430,29 @@ def page_live_detect(predictor):
 
         with col_speed:
             st.metric(label="Inference Latency", value=f"{latency * 1000:.1f} ms")
+
+        # Live Google News Cross-Verification Card
+        google_data = res.get("google_verification", {})
+        if google_data:
+            st.markdown("---")
+            st.subheader("🌐 Live Google News & Fact-Check Cross-Verification")
+            status = google_data.get("status", "UNVERIFIED")
+            note = google_data.get("verification_note", "")
+            matched_articles = google_data.get("matched_articles", [])
+            verified_sources = google_data.get("verified_sources", [])
+
+            if status == "VERIFIED_REAL":
+                st.success(f"🟢 **Confirmed by Major News Media:** {note}")
+            elif status == "DEBUNKED_FAKE":
+                st.error(f"🔴 **Fact-Check Warning / Known Disinformation Pattern:** {note}")
+            else:
+                st.info(f"🟡 **Independent Web Content:** {note}")
+
+            if matched_articles:
+                with st.expander(f"📰 Related Live Media Coverage & Sources ({len(matched_articles)} found on Google)", expanded=(status == "VERIFIED_REAL")):
+                    for art in matched_articles:
+                        src_badge = f"**[{art.get('source', 'Web')}]**"
+                        st.markdown(f"- {src_badge} [{art.get('title', 'Article')}]({art.get('link', '#')})")
 
         # Stylometric Profile
         st.markdown("---")
