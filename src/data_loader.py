@@ -93,12 +93,15 @@ class NewsDataLoader:
         politifact_fake = os.path.join(self.data_dir, "politifact_fake.csv")
         isot_fake = os.path.join(self.data_dir, "Fake.csv")
 
-        if os.path.exists(weibo_train):
+        has_english = os.path.exists(gossipcop_fake) or os.path.exists(politifact_fake) or os.path.exists(isot_fake)
+        has_weibo = os.path.exists(weibo_train)
+
+        if has_english and has_weibo:
+            return "combined"
+        elif has_english:
+            return "combined" if (os.path.exists(gossipcop_fake) and os.path.exists(politifact_fake)) else ("gossipcop" if os.path.exists(gossipcop_fake) else "politifact")
+        elif has_weibo:
             return "weibo"
-        elif os.path.exists(gossipcop_fake):
-            return "gossipcop"
-        elif os.path.exists(politifact_fake):
-            return "politifact"
         elif os.path.exists(isot_fake):
             return "isot"
         else:
@@ -119,7 +122,9 @@ class NewsDataLoader:
 
         logger.info(f"Target dataset type selected: '{target_type.upper()}'")
 
-        if target_type == "weibo":
+        if target_type == "combined":
+            return self._load_combined()
+        elif target_type == "weibo":
             return self._load_weibo()
         elif target_type == "gossipcop":
             return self._load_fakenewsnet("gossipcop")
@@ -129,6 +134,51 @@ class NewsDataLoader:
             return self._load_isot()
         else:
             raise ValueError(f"Unsupported dataset type: {target_type}")
+
+    def _load_combined(self) -> pd.DataFrame:
+        """
+        Load a balanced unified dataset combining English (PolitiFact + GossipCop)
+        and Chinese (Weibo) so the model learns cross-lingual fake news indicators.
+        """
+        dfs = []
+
+        # 1. FakeNewsNet PolitiFact (English)
+        try:
+            pf = self._load_fakenewsnet("politifact")
+            dfs.append(pf)
+            logger.info(f"Loaded PolitiFact: {len(pf):,} samples.")
+        except Exception as e:
+            logger.warning(f"PolitiFact could not be loaded: {e}")
+
+        # 2. FakeNewsNet GossipCop (English)
+        try:
+            gc = self._load_fakenewsnet("gossipcop")
+            gc_fake = gc[gc["label"] == 0]
+            gc_real = gc[gc["label"] == 1].sample(n=len(gc_fake), random_state=42)
+            gc_balanced = pd.concat([gc_fake, gc_real], ignore_index=True)
+            dfs.append(gc_balanced)
+            logger.info(f"Loaded balanced GossipCop: {len(gc_balanced):,} samples.")
+        except Exception as e:
+            logger.warning(f"GossipCop could not be loaded: {e}")
+
+        # 3. Weibo Benchmark (Chinese)
+        try:
+            wb = self._load_weibo()
+            wb_fake = wb[wb["label"] == 0]
+            wb_real = wb[wb["label"] == 1].sample(n=min(len(wb_fake), len(wb[wb["label"] == 1])), random_state=42)
+            wb_balanced = pd.concat([wb_fake, wb_real], ignore_index=True)
+            dfs.append(wb_balanced)
+            logger.info(f"Loaded balanced Weibo: {len(wb_balanced):,} samples.")
+        except Exception as e:
+            logger.warning(f"Weibo could not be loaded: {e}")
+
+        if not dfs:
+            raise FileNotFoundError(f"No valid dataset could be loaded from {self.data_dir}")
+
+        combined_df = pd.concat(dfs, ignore_index=True)
+        logger.info(f"Combined Multi-Domain Benchmark: {len(combined_df):,} total samples. "
+                    f"Label distribution: {dict(combined_df['label'].value_counts())}")
+        return combined_df
 
     def _load_weibo(self) -> pd.DataFrame:
         """Load Weibo Chinese benchmark from train.pkl, val.pkl, and test.pkl."""

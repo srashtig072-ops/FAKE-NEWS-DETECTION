@@ -394,14 +394,21 @@ def page_live_detect(predictor):
 
         with col_verdict:
             if final_label == "REAL":
-                st.markdown('<div class="badge-real"><span>✅</span> VERIFIED REAL NEWS</div>', unsafe_allow_html=True)
+                st.markdown('<div class="badge-real"><span>✅</span> REAL NEWS</div>', unsafe_allow_html=True)
+                st.markdown('<p style="color: #10B981; font-weight: 700; margin-top: 0.5rem; font-size: 1.05rem;">Verdict: Verified Authentic</p>', unsafe_allow_html=True)
             else:
-                st.markdown('<div class="badge-fake"><span>🚨</span> DETECTED FAKE NEWS</div>', unsafe_allow_html=True)
+                st.markdown('<div class="badge-fake"><span>🚨</span> FAKE NEWS</div>', unsafe_allow_html=True)
+                st.markdown('<p style="color: #EF4444; font-weight: 700; margin-top: 0.5rem; font-size: 1.05rem;">Verdict: Flagged as Fake / Disinformation</p>', unsafe_allow_html=True)
 
         with col_conf:
-            st.markdown(f"**Confidence:** `{final_conf}%`")
-            st.progress(final_conf / 100.0)
-            st.caption(f"Real Probability: `{prob_real:.2%}` | Fake Probability: `{prob_fake:.2%}` (Threshold: `{threshold_val:.2f}`)")
+            if final_label == "FAKE":
+                st.markdown(f"**Fake News Likelihood:** <span style='color: #EF4444; font-size: 1.35rem; font-weight: 800;'>{prob_fake * 100:.1f}% FAKE</span>", unsafe_allow_html=True)
+                st.progress(prob_fake)
+                st.markdown(f"**Classification:** **`FAKE`** (Fake: `{prob_fake:.1%}` | Real: `{prob_real:.1%}`)")
+            else:
+                st.markdown(f"**Authenticity Score:** <span style='color: #10B981; font-size: 1.35rem; font-weight: 800;'>{prob_real * 100:.1f}% REAL</span>", unsafe_allow_html=True)
+                st.progress(prob_real)
+                st.markdown(f"**Classification:** **`REAL`** (Real: `{prob_real:.1%}` | Fake: `{prob_fake:.1%}`)")
 
         with col_speed:
             st.metric(label="Inference Latency", value=f"{latency * 1000:.1f} ms")
