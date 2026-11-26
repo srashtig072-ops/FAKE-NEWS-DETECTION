@@ -102,6 +102,8 @@ class NewsPredictor:
         model_cls_name = self.model.__class__.__name__
         if hasattr(self.model, "coef_"):
             self._is_linear = True
+        elif hasattr(self.model, "feature_log_prob_"):
+            self._is_linear = True
         elif hasattr(self.model, "feature_importances_") or "Forest" in model_cls_name or "XGB" in model_cls_name:
             self._is_tree = True
         elif hasattr(self.model, "calibrated_classifiers_"):
@@ -219,6 +221,8 @@ class NewsPredictor:
             # Extract weights from linear model or calibrated base estimator
             if hasattr(self.model, "coef_"):
                 weights = self.model.coef_[0]
+            elif hasattr(self.model, "feature_log_prob_") and len(self.model.feature_log_prob_) >= 2:
+                weights = self.model.feature_log_prob_[1] - self.model.feature_log_prob_[0]
             elif hasattr(self.model, "calibrated_classifiers_"):
                 # Average weights across calibrated folds
                 weights = np.mean([clf.estimator.coef_[0] for clf in self.model.calibrated_classifiers_], axis=0)
